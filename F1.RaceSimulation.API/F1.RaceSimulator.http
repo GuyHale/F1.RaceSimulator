@@ -1,0 +1,6 @@
+@F1.RaceSimulator_HostAddress = http://localhost:5274
+
+GET {{F1.RaceSimulator_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
