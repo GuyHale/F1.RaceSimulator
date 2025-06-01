@@ -1,4 +1,5 @@
-﻿using SimulatorEngine.Events;
+﻿using System.Diagnostics.CodeAnalysis;
+using SimulatorEngine.Events;
 
 namespace SimulatorEngine.Strategy;
 
@@ -12,4 +13,10 @@ public record RaceStrategy
     
     public RaceStartStrategy StartStrategy { get; }
     public List<Pitstop> Pitstops { get; } = [];
+
+    public bool ShouldPerformPitstop(int lapNumber, [NotNullWhen(true)] out Pitstop? pitstop)
+    {
+        pitstop = Pitstops.FirstOrDefault(p => p.Lap == lapNumber);
+        return pitstop is not null;
+    }
 }

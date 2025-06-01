@@ -4,12 +4,12 @@ using SimulatorEngine.Car.Evolution;
 using SimulatorEngine.Events;
 using SimulatorEngine.Strategy;
 
-namespace SimulatorEngine.Simulators.LinearFuelAndTyreDeg;
+namespace SimulatorEngine.Simulators;
 
 public class LinearFuelAndTyreDegRaceSimulator
 {
     private LapCompletedEventHandler _lapCompletedEvent = new();
-    private PitstopHandler _pitstopEvent = new();
+    private PitstopEventHandler _pitstopEventEvent = new();
 
     public SimulationResult Run()
     {
@@ -31,39 +31,50 @@ public class LinearFuelAndTyreDegRaceSimulator
         
         float fuelLossPerLapPerKg = 1.5f;
         
-        var tyreDegCalculator = new LinearTyreDegradation(tyreStrengthConfigs);
-        var fuelTimeLossCalculator = new LinearFuelEffectOnLapTime(timeLossPerFuelKg);
+        var weatherBaseLapTimeComponent = new DryWeatherLapTimeComponent();
+        var tyreDegLapTimeComponent = new LinearTyreDegradation(tyreStrengthConfigs);
+        var fuelTimeLapTimeComponent = new LinearFuelLoad(timeLossPerFuelKg);
         
-        IEnumerable<ITimeLossCalculator> timeLossCalculators = [tyreDegCalculator, fuelTimeLossCalculator];
+        IEnumerable<ILapTimeComponent> timeLossCalculators = [weatherBaseLapTimeComponent, tyreDegLapTimeComponent, fuelTimeLapTimeComponent];
         
-        using RaceCar car = new(startStrategy, fuelLossPerLapPerKg, _lapCompletedEvent, _pitstopEvent);
-        using LinearFuelAndTyreDegLapSimulator lapSimulator = new(timeLossCalculators, _lapCompletedEvent,  _pitstopEvent);
-        using SimulationResultBuilder resultBuilder = new(raceStrategy, _lapCompletedEvent);
+        RaceCar car = new(startStrategy, fuelLossPerLapPerKg, baseLapTime);
+        
+        LapCompletedEventHandler lapCompletedEventHandler = new();
+        LapSimulationEventHandler lapSimulationEventHandler = new(timeLossCalculators);
+        PitstopEventHandler pitstopEventHandler = new();
+        
+        SimulationResultBuilder resultBuilder = new(raceStrategy);
         
         int totalLaps = 72;
         int lapNumber = 1;
         
         TimeSpan raceDuration = TimeSpan.Zero;
+        Race race = new();
 
         try
         {
             while (lapNumber <= totalLaps)
             {
-                lapSimulator.SimulateLap(baseLapTime, car);
+                Lap lap = new(car, lapNumber);
+                
+                race.AddLap(lap);
+                
+                LapSimulationEvent lapSimulation = new(lap);
+                
+                lapSimulationEventHandler.Handle(lapSimulation);
 
-                var pitStop = pitstops.FirstOrDefault(p => p.Lap == lapNumber);
-
-                if (pitStop is not null)
+                if (raceStrategy.ShouldPerformPitstop(lapNumber, out Pitstop? pitstop))
                 {
-                    _pitstopEvent.Invoke(pitStop);
+                    PitstopEvent pitstopEvent = new(lap, pitstop);
+                    pitstopEventHandler.Handle(pitstopEvent);
                 }
 
-                TimeSpan lapTime = lapSimulator.Length;
-                raceDuration += lapTime;
+                LapCompletedEvent lapCompletedEvent = new(lap);
                 
-                resultBuilder.WithLapTime(lapTime);
+                lapCompletedEventHandler.Handle(lapCompletedEvent);
+
+                resultBuilder.WithLap(lap);
                 
-                _lapCompletedEvent.Invoke();
                 lapNumber++;
             }
         }

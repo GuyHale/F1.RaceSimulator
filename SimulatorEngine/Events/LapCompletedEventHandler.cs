@@ -1,23 +1,15 @@
 ﻿namespace SimulatorEngine.Events;
 
-public class LapCompletedEventHandler
+public class LapCompletedEventHandler 
+    : IRaceEventHandler<LapCompletedEvent>
 {
-    private readonly List<Action> _actions = [];
-    
-    public static LapCompletedEventHandler operator +(LapCompletedEventHandler a, Action b)
+    public void Handle(LapCompletedEvent e) 
     {
-        a._actions.Add(b);
-        return a;
-    }
-    
-    public static LapCompletedEventHandler operator -(LapCompletedEventHandler a, Action b)
-    {
-        a._actions.Remove(b);
-        return a;
-    }
+        e.Lap.Car.Engine.ConsumeFuel();
 
-    public void Invoke()
-    {
-        _actions.ForEach(a => a());
+        if (!e.Lap.EventOccurred(LapEventType.Pitstop))
+        {
+            e.Lap.Car.Tyres.IncrementWear();
+        }
     }
 }

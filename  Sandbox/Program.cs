@@ -1,7 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using SimulatorEngine.Simulators;
-using SimulatorEngine.Simulators.LinearFuelAndTyreDeg;
 
 Console.WriteLine("Hello, World!");
 

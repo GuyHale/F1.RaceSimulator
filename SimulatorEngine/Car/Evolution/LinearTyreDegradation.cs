@@ -4,7 +4,7 @@ using SimulatorEngine.Strategy;
 namespace SimulatorEngine.Car.Evolution;
 
 public record LinearTyreDegradation(TyreStrengthConfig[] TyreStrengthConfigs)
-    : ITimeLossCalculator
+    : ILapTimeComponent
 {
     public TimeSpan Calculate(RaceCar raceCar)
     {

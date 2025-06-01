@@ -1,11 +1,11 @@
 ﻿namespace SimulatorEngine.Car.Evolution;
 
-public class LinearFuelEffectOnLapTime 
-    : ITimeLossCalculator
+public class LinearFuelLoad 
+    : ILapTimeComponent
 {
     private readonly TimeSpan _timeLossPerKgFuel;
 
-    public LinearFuelEffectOnLapTime(TimeSpan timeLossPerKgFuel)
+    public LinearFuelLoad(TimeSpan timeLossPerKgFuel)
     {
         _timeLossPerKgFuel = timeLossPerKgFuel;
     }

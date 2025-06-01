@@ -1,6 +1,6 @@
 ﻿namespace SimulatorEngine.Car.Evolution;
 
-public interface ITimeLossCalculator
+public interface ILapTimeComponent
 {
     public TimeSpan Calculate(RaceCar raceCar);
 }
