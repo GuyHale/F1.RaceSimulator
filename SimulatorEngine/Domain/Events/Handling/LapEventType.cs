@@ -1,4 +1,4 @@
-﻿namespace SimulatorEngine.Domain.Events;
+﻿namespace SimulatorEngine.Domain.Events.Handling;
 
 [Flags]
 public enum LapEventType

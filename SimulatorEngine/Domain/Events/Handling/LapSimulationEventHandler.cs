@@ -1,6 +1,6 @@
 ﻿using SimulatorEngine.Domain.Car.Evolution;
 
-namespace SimulatorEngine.Domain.Events;
+namespace SimulatorEngine.Domain.Events.Handling;
 
 public class LapSimulationEventHandler 
     : IRaceEventHandler<LapSimulationEvent>

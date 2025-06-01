@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using SimulatorEngine.Domain.Events;
+using SimulatorEngine.Domain.Events.Handling;
 
 namespace SimulatorEngine.Domain.Strategy;
 

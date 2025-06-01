@@ -1,5 +1,6 @@
 ﻿using SimulatorEngine.Domain.Car.Components.Tyres;
 using SimulatorEngine.Domain.Events;
+using SimulatorEngine.Domain.Events.Handling;
 using SimulatorEngine.Domain.Strategy;
 
 namespace SimulatorEngine.Domain.Car.Components;

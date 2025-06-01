@@ -1,13 +1,11 @@
 ﻿using SimulatorEngine.Application.Simulators;
 using SimulatorEngine.Domain.Car.Components.Tyres;
-using SimulatorEngine.Domain.Events;
+using SimulatorEngine.Domain.Events.Handling;
 using SimulatorEngine.Domain.Race;
 using SimulatorEngine.Domain.Statistics;
 using SimulatorEngine.Domain.Strategy;
 
-Console.WriteLine("Hello, World!");
-
-RaceStartStrategy startStrategy = new(StartingFuelKg: 100, TyreCompoundType.Soft, new TyreAges(0));
+RaceStartStrategy startStrategy = new(StartingFuelKg: 110, TyreCompoundType.Soft, new TyreAges(0));
         
 List<Pitstop> pitstops = [new Pitstop(18, TimeSpan.FromSeconds(24), TyreCompoundType.Hard, new TyreAges(0))];
         
@@ -26,7 +24,7 @@ TimeSpan baseLapTime = TimeSpan.FromSeconds(97.5);
 float fuelLossPerLapPerKg = 1.5f;
 
 FuelStatistics fuelStatistics = new(fuelLossPerLapPerKg, timeLossPerFuelKg);
-CircuitStatistics circuitStatistics = new(baseLapTime, ref fuelStatistics,  tyreStrengthConfigs);
+CircuitStatistics circuitStatistics = new(totalLaps: 72, baseLapTime, ref fuelStatistics,  tyreStrengthConfigs);
 
 RaceConfiguration raceConfiguration = new(raceStrategy, circuitStatistics);
 

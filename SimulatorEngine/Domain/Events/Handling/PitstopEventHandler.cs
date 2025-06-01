@@ -1,4 +1,4 @@
-﻿namespace SimulatorEngine.Domain.Events;
+﻿namespace SimulatorEngine.Domain.Events.Handling;
 
 public class PitstopEventHandler 
    : IRaceEventHandler<PitstopEvent>

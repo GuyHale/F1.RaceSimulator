@@ -1,6 +1,8 @@
 ﻿using SimulatorEngine.Domain.Car;
 using SimulatorEngine.Domain.Car.Evolution;
 using SimulatorEngine.Domain.Events;
+using SimulatorEngine.Domain.Events.Dispatching;
+using SimulatorEngine.Domain.Events.Handling;
 using SimulatorEngine.Domain.Race;
 using SimulatorEngine.Domain.Simulation;
 
@@ -21,15 +23,25 @@ public class LinearFuelAndTyreDegRaceSimulator
         
         LapCompletedEventHandler lapCompletedEventHandler = new();
         LapSimulationEventHandler lapSimulationEventHandler = new(timeLossCalculators);
+        
         PitstopEventHandler pitstopEventHandler = new();
+
+        EventDispatcher<LapSimulationEvent> lapSimulationDispatcher = new();
+        lapSimulationDispatcher.RegisterHandler(lapSimulationEventHandler);
         
-        SimulationResultBuilder resultBuilder = new(raceConfiguration.Strategy);
+        EventDispatcher<PitstopEvent> pitStopDispatcher = new();
+        pitStopDispatcher.RegisterHandler(pitstopEventHandler);
         
-        int totalLaps = 72;
+        EventDispatcher<LapCompletedEvent> lapCompletionDispatcher = new();
+        lapCompletionDispatcher.RegisterHandler(lapCompletedEventHandler);
+        
+        RaceProgress raceProgress = new();
+        SimulationResultBuilder resultBuilder = new(raceProgress, raceConfiguration.Strategy);
+        
+        int totalLaps = raceConfiguration.CircuitStatistics.TotalLaps;
         int lapNumber = 1;
         
         TimeSpan raceDuration = TimeSpan.Zero;
-        Race race = new();
 
         try
         {
@@ -37,21 +49,21 @@ public class LinearFuelAndTyreDegRaceSimulator
             {
                 Lap lap = new(car, lapNumber);
                 
-                race.AddLap(lap);
+                raceProgress.Laps.Add(lap);
                 
                 LapSimulationEvent lapSimulation = new(lap);
                 
-                lapSimulationEventHandler.Handle(lapSimulation);
+                lapSimulationDispatcher.Dispatch(lapSimulation);
 
                 if (raceConfiguration.Strategy.ShouldPerformPitstop(lapNumber, out Pitstop? pitstop))
                 {
                     PitstopEvent pitstopEvent = new(lap, pitstop);
-                    pitstopEventHandler.Handle(pitstopEvent);
+                    pitStopDispatcher.Dispatch(pitstopEvent);
                 }
 
                 LapCompletedEvent lapCompletedEvent = new(lap);
                 
-                lapCompletedEventHandler.Handle(lapCompletedEvent);
+                lapCompletionDispatcher.Dispatch(lapCompletedEvent);
 
                 resultBuilder.WithLap(lap);
                 

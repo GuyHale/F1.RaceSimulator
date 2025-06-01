@@ -1,5 +1,6 @@
 ﻿using SimulatorEngine.Domain.Car.Components;
 using SimulatorEngine.Domain.Events;
+using SimulatorEngine.Domain.Events.Handling;
 using SimulatorEngine.Domain.Race;
 
 namespace SimulatorEngine.Domain.Car;

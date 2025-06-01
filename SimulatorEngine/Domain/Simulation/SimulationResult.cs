@@ -1,16 +1,13 @@
-﻿using SimulatorEngine.Domain.Strategy;
+﻿using SimulatorEngine.Domain.Race;
+using SimulatorEngine.Domain.Strategy;
 
 namespace SimulatorEngine.Domain.Simulation;
 
 public record SimulationResult : IComparable<SimulationResult>
 {
-    public SimulationResult()
-    {
-        
-    }
-    
     public TimeSpan RaceDuration { get; init; }
-    public RaceStrategy? Strategy { get; init; }
+    public required RaceStrategy Strategy { get; init; }
+    public required RaceProgress RaceProgress { get; init; }
     public bool Completed { get; init; }
     public int LapNumber { get; init; }
     public string Errors { get; init; } = string.Empty;
